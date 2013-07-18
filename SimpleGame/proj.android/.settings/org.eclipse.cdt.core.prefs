@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/0.756827735/NDK_MODULE_PATH/delimiter=;
+environment/project/0.756827735/NDK_MODULE_PATH/operation=append
+environment/project/0.756827735/NDK_MODULE_PATH/value=D\:\\projects\\cocos2d\\cocos2d-x\\cocos2dx\\platform\\third_party\\android\\prebuilt\\;D\:\\projects\\cocos2d\\cocos2d-x\\;
+environment/project/0.756827735/append=true
+environment/project/0.756827735/appendContributed=true
