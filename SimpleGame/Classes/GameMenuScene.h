@@ -61,6 +61,10 @@ public:
     virtual ~GameMenuLayer();
     bool init();
     CREATE_FUNC(GameMenuLayer);
+    void testDealloc(float dt);
+    void onStart(CCObject* pSender);
+    void onOption(CCObject* pSender);
+    void onAbout(CCObject* pSender);
 
     void gameMenuDone();
 

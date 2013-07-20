@@ -45,20 +45,16 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // set FPS. the default value is 1.0/60 if you don't call this
     pDirector->setAnimationInterval(1.0 / 60);
 
+    
+    CCDictionary *strings = CCDictionary::createWithContentsOfFile("strings.xml");
+    //?áè?Hello?ü?Dμ??μ objectForKey?ù?Ykey￡???è???ó|μ?string
+    const char *version = ((CCString*)strings->objectForKey("Version"))->m_sString.c_str();
+    //?áè?Info?ü?Dμ??μ
+    const char *info = ((CCString*)strings->objectForKey("Info"))->m_sString.c_str();
+    
     // create a scene. it's an autorelease object
-
-	
-	/** 在cocos2d-x中使用中文	**/
-	//利用CCDictionary来读取xml
-	CCDictionary *strings = CCDictionary::createWithContentsOfFile("strings.xml");
-	//读取Hello键中的值 objectForKey根据key，获取对应的string
-	const char *hello = ((CCString*)strings->objectForKey("Hello"))->m_sString.c_str();
-	//读取Info键中的值
-	const char *info = ((CCString*)strings->objectForKey("Info"))->m_sString.c_str();
-	
-
-	GameMenuScene *gameMenuScene = GameMenuScene::create();
-	gameMenuScene->getLayer()->getLabel()->setString(hello);
+    GameMenuScene *gameMenuScene = GameMenuScene::create();
+    gameMenuScene->getLayer()->getLabel()->setString(version);
 
     // run
     pDirector->runWithScene(gameMenuScene);
