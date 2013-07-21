@@ -45,10 +45,13 @@
 /*----------------------------------------------*
  * constants                                    *
  *----------------------------------------------*/
+static float alignmentItemPadding = 50;
+static float menuItemPaddingCenter = 110;
 
 /*----------------------------------------------*
  * macros                                       *
  *----------------------------------------------*/
+#define TRANSITION_DURATION (1.2f)
 
 /*----------------------------------------------*
  * routines' implementations                    *
@@ -66,7 +69,6 @@ bool GameMenuScene::init()
         this->_layer = GameMenuLayer::create();
         this->_layer->retain();
         this->addChild(_layer);
-        
         return true;
     }
     else
@@ -84,30 +86,44 @@ GameMenuScene::~GameMenuScene()
     }
 }
 
-
 bool GameMenuLayer::init()
 {
     if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
     {
         CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-        this->_label = CCLabelTTF::create("","Artial", 16);
-        _label->retain();
-        _label->setColor( ccc3(0, 0, 0) );
-//        CCLog("GameMenuLayer:testDealloc %f, %f", _label->getDimensions().width, _label->getDimensions().height);
-        _label->setPosition( ccp(_label->getFontSize()*2, _label->getFontSize()*2) );
-        this->addChild(_label);
-
+        CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
+        CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
+        CCLog("GameMenuLayer:testDealloc %f, %f",winSize.width, winSize.height);
         
-        CCMenuItemFont* item1 = CCMenuItemFont::create( "Shooting", this, menu_selector(GameMenuLayer::onStart) );
-        CCMenuItemFont* item2 = CCMenuItemFont::create( "Option", this, menu_selector(GameMenuLayer::onOption) );
-        CCMenuItemFont* item3 = CCMenuItemFont::create( "About", this, menu_selector(GameMenuLayer::onAbout) );
+        this->_label = TTFFontShadowAndStroke("", 16);
+        _label->retain();
+
+        CCLog("GameMenuLayer:origin %f, %f", origin.x, origin.y);
+        _label->setPosition( ccp(origin.x + _label->getFontSize()*2 , origin.y + visibleSize.height - _label->getFontSize()) );
+//        _label->setPosition(ccp(winSize.width/2, winSize.height/2));
+        this->addChild(_label, 1);
+
+        CCSprite* bg1 = CCSprite::create("menu1.png");
+        bg1->setScale(winSize.width/bg1->getTextureRect().size.width);
+        bg1->setPosition(ccp(winSize.width/2, winSize.height/2));
+        addChild(bg1, 0);
+
+        // Label Item (CCLabelTTF)
+        CCLabelTTF* label1 = TTFFontShadowAndStroke("Shooting", 32);
+        CCLabelTTF* label2 = TTFFontShadowAndStroke("Option", 32);        
+        CCLabelTTF* label3 = TTFFontShadowAndStroke("Quit", 32);
+
+        CCMenuItemLabel* item1 = CCMenuItemLabel::create( label1, this, menu_selector(GameMenuLayer::onStart) );
+        CCMenuItemLabel* item2 = CCMenuItemLabel::create( label2, this, menu_selector(GameMenuLayer::onOption) );
+        CCMenuItemLabel* item3 = CCMenuItemLabel::create( label3, this, menu_selector(GameMenuLayer::onQuit) );
 
         CCMenu* menu = CCMenu::create( item1, item2, item3, NULL );
-        menu->alignItemsVertically();
-        menu->setColor( ccc3(0, 0, 0) );
+        menu->alignItemsHorizontallyWithPadding(alignmentItemPadding);
+        menu->setColor( ccc3(255, 255, 255) );
+        menu->setPosition(ccp(winSize.width/2, origin.y + label1->getFontSize()));
 
-        addChild( menu );
-                
+        addChild(menu, 1);
+
         return true;
     }
     else
@@ -118,17 +134,23 @@ bool GameMenuLayer::init()
 
 void GameMenuLayer::onStart(CCObject* pSender)
 {
-    
-    this->runAction( CCSequence::create(
-                            CCDelayTime::create(3),
-                            CCCallFunc::create(this, 
-                            callfunc_selector(GameMenuLayer::gameMenuDone)),
-                            NULL));
-//    CCScene* scene = new SceneTestScene();
-//    CCLayer* pLayer = new SceneTestLayer2();
-//    scene->addChild( pLayer, 0 );
-//    CCDirector::sharedDirector()->pushScene( scene );
-//    scene->release();
+    CCScene* scene = HelloWorld::scene() ;
+    CCScene* pScene = CCTransitionFade::create(TRANSITION_DURATION, scene);
+//    scene->release();      //???why error?
+    CCDirector::sharedDirector()->setDepthTest(false);
+    if (pScene)
+    {
+        CCDirector::sharedDirector()->replaceScene(pScene);
+    }
+    //    this->runAction( CCSequence::create(
+    //                            CCDelayTime::create(3),
+    //                            CCCallFunc::create(this,
+    //                            callfunc_selector(GameMenuLayer::gameMenuDone)),
+    //                            NULL));
+    //    CCScene* scene = new SceneTestScene();
+    //    CCLayer* pLayer = new SceneTestLayer2();
+    //    scene->addChild( pLayer, 0 );
+    //    CCDirector::sharedDirector()->pushScene(scene);
 //    pLayer->release();
 }
 
@@ -144,10 +166,10 @@ void GameMenuLayer::onOption(CCObject* pSender)
 }
 
 
-void GameMenuLayer::onAbout(CCObject* pSender)
+void GameMenuLayer::onQuit(CCObject* pSender)
 {
-    //getCocosApp()->exit();
-    //CCDirector::sharedDirector()->popScene();
+    // "quit" menu item clicked
+    CCDirector::sharedDirector()->end();
 
     //// HA HA... no more terminate on sdk v3.0
     //// http://developer.apple.com/iphone/library/qa/qa2008/qa1561.html
@@ -162,7 +184,34 @@ void GameMenuLayer::testDealloc(float dt)
 
 void GameMenuLayer::gameMenuDone()
 {
-    CCDirector::sharedDirector()->replaceScene( HelloWorld::scene() );
+//    CCDirector::sharedDirector()->replaceScene( HelloWorld::scene() );
+}
+
+CCLabelTTF* GameMenuLayer::TTFFontShadowAndStroke(const char *value, int fontSize)
+{
+    CCSize s = CCDirector::sharedDirector()->getWinSize();
+
+    ccColor3B tintColorWhite = { 255, 255, 255 };
+    ccColor3B strokeColor = { 0, 0, 0 };
+    ccColor3B strokeShadowColor = { 0, 0, 0 };
+
+    CCSize shadowOffset(12.0, 12.0);
+
+    ccFontDefinition TextDef;
+    TextDef.m_fontSize = fontSize;
+    TextDef.m_fontName = std::string("fonts/Marker Felt.ttf");
+
+    TextDef.m_shadow.m_shadowEnabled = false;
+    TextDef.m_shadow.m_shadowOffset  = shadowOffset;
+    TextDef.m_shadow.m_shadowOpacity = 1.0;
+    TextDef.m_shadow.m_shadowBlur    = 1.0;
+    TextDef.m_stroke.m_strokeEnabled = true;
+    TextDef.m_stroke.m_strokeColor   = strokeColor;
+    TextDef.m_stroke.m_strokeSize    = 1.5;
+    TextDef.m_fontFillColor   = tintColorWhite;
+    
+   return CCLabelTTF::createWithFontDefinition(value, TextDef);
+
 }
 
 GameMenuLayer::~GameMenuLayer()

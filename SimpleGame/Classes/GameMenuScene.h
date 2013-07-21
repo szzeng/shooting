@@ -64,11 +64,12 @@ public:
     void testDealloc(float dt);
     void onStart(CCObject* pSender);
     void onOption(CCObject* pSender);
-    void onAbout(CCObject* pSender);
+    void onQuit(CCObject* pSender);
 
     void gameMenuDone();
 
     CC_SYNTHESIZE_READONLY(cocos2d::CCLabelTTF*, _label, Label);
+   cocos2d::CCLabelTTF* TTFFontShadowAndStroke(const char *value, int fontSize);
 };
 
 class GameMenuScene : public cocos2d::CCScene
