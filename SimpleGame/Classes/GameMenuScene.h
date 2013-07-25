@@ -61,6 +61,7 @@ public:
     virtual ~GameMenuLayer();
     bool init();
     CREATE_FUNC(GameMenuLayer);
+    void ccTouchesEnded(cocos2d::CCSet* touches, cocos2d::CCEvent* event);
     void testDealloc(float dt);
     void onStart(CCObject* pSender);
     void onOption(CCObject* pSender);

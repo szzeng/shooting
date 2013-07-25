@@ -47,6 +47,8 @@
  *----------------------------------------------*/
 static float alignmentItemPadding = 50;
 static float menuItemPaddingCenter = 110;
+// LayerIgnoreAnchorPointPos
+#define kLayerIgnoreAnchorPoint  1000
 
 /*----------------------------------------------*
  * macros                                       *
@@ -103,6 +105,8 @@ bool GameMenuLayer::init()
 //        _label->setPosition(ccp(winSize.width/2, winSize.height/2));
         this->addChild(_label, 1);
 
+        this->setTouchEnabled(true);
+
         CCSprite* bg1 = CCSprite::create("menu1.png");
         bg1->setScale(winSize.width/bg1->getTextureRect().size.width);
         bg1->setPosition(ccp(winSize.width/2, winSize.height/2));
@@ -123,6 +127,7 @@ bool GameMenuLayer::init()
         menu->setPosition(ccp(winSize.width/2, origin.y + label1->getFontSize()));
 
         addChild(menu, 1);
+//        schedule( schedule_selector(GameMenuLayer::testDealloc) );
 
         return true;
     }
@@ -156,6 +161,49 @@ void GameMenuLayer::onStart(CCObject* pSender)
 
 void GameMenuLayer::onOption(CCObject* pSender)
 {
+    CCNode* pLayer = this->getChildByTag(kLayerIgnoreAnchorPoint);
+    if(pLayer != NULL)
+    {
+        this->removeChild(pLayer);
+    }
+
+    CCSize s = CCDirector::sharedDirector()->getWinSize();
+    CCLayerColor *l = CCLayerColor::create(ccc4(255, 255, 255, 0xA0), 1.75, 1);
+
+//    l->setAnchorPoint(ccp(0.5f, 0.5f));
+    l->setPosition(ccp( s.width/2, s.height/2));
+    l->ignoreAnchorPointForPosition(true);
+
+
+    CCScaleBy *scale = CCScaleBy::create(0.3, 200);
+    CCScaleBy* back = (CCScaleBy*)scale->reverse();
+    CCSequence *seq = CCSequence::create(scale, NULL);
+
+    l->runAction(CCRepeat::create(seq, 1));
+    
+    CCLabelTTF* label1 = TTFFontShadowAndStroke("SZ ZENG \r\n SZ shoot SY ", 32);
+//    CCSize blockSize = CCSizeMake(350, 200);
+//    label1->setDimensions(blockSize);
+    l->addChild(label1);
+    CCSize lsize = l->getContentSize();
+    CCLog("++++++++getContentSize  x:%f, y:%f", lsize.width, lsize.height/2); 
+    label1->setPosition(ccp(lsize.width/2, lsize.height/2));
+    label1->setScale(0.005);
+
+    this->addChild(l, 1, kLayerIgnoreAnchorPoint);
+    
+//    CCSprite *child = CCSprite::create("Images/grossini.png");
+//    l->addChild(child);
+//    CCSize lsize = l->getContentSize();
+//    child->setPosition(ccp(lsize.width/2, lsize.height/2));
+
+//    CCMenuItemFont *item = CCMenuItemFont::create("Toogle ignore anchor point", this, menu_selector(LayerIgnoreAnchorPointScale::onToggle));
+//
+//    CCMenu *menu = CCMenu::create(item, NULL);
+//    this->addChild(menu);
+//
+//    menu->setPosition(ccp(s.width/2, s.height/2));
+    
 //    CCScene* scene = new SceneTestScene();
 //    CCLayer* pLayer = new SceneTestLayer2();
 //    scene->addChild( pLayer, 0 );
@@ -177,6 +225,26 @@ void GameMenuLayer::onQuit(CCObject* pSender)
     //    [[UIApplication sharedApplication] performSelector:@selector(terminate)];
 }
 
+void GameMenuLayer::ccTouchesEnded(CCSet* touches, CCEvent* event)
+{
+    // Choose one of the touches to work with
+    CCTouch* touch = (CCTouch*)( touches->anyObject() );
+    CCPoint location = touch->getLocation();
+    CCLog("++++++++after  x:%f, y:%f", location.x, location.y); 
+    
+    CCNode* pLayer = this->getChildByTag(kLayerIgnoreAnchorPoint);
+    if(pLayer == NULL)
+    	return;
+
+    CCScaleBy *scale = CCScaleBy::create(0.3, 200);
+    CCScaleBy* back = (CCScaleBy*)scale->reverse();
+    CCSequence *seq = CCSequence::create(back, NULL);
+
+    pLayer->runAction(CCRepeat::create(seq, 1));
+//    this->removeChild(pLayer);
+
+    
+}
 void GameMenuLayer::testDealloc(float dt)
 {
 //    CCLog("GameMenuLayer:testDealloc");
