@@ -170,49 +170,61 @@ void GameMenuLayer::onOption(CCObject* pSender)
     CCSize s = CCDirector::sharedDirector()->getWinSize();
     CCLayerColor *l = CCLayerColor::create(ccc4(255, 255, 255, 0xA0), 1.75, 1);
 
-//    l->setAnchorPoint(ccp(0.5f, 0.5f));
+//    CCLog("++++++++getWinSize  x:%f, y:%f", s.width, s.height/2); 
+    l->setAnchorPoint(ccp(0.5f, 0.5f));
+    l->ignoreAnchorPointForPosition(false);
     l->setPosition(ccp( s.width/2, s.height/2));
-    l->ignoreAnchorPointForPosition(true);
 
 
     CCScaleBy *scale = CCScaleBy::create(0.3, 200);
     CCScaleBy* back = (CCScaleBy*)scale->reverse();
     CCSequence *seq = CCSequence::create(scale, NULL);
-
-    l->runAction(CCRepeat::create(seq, 1));
     
-    CCLabelTTF* label1 = TTFFontShadowAndStroke("SZ ZENG \r\n SZ shoot SY ", 32);
+    CCLabelTTF* label = TTFFontShadowAndStroke("SZ ZENG MOD", 32);
+    CCLabelTTF* label1 = TTFFontShadowAndStroke("SZ shoot SY ", 32);
+    CCLabelTTF* label2 = TTFFontShadowAndStroke("SY shoot SZ ", 32);
 //    CCSize blockSize = CCSizeMake(350, 200);
 //    label1->setDimensions(blockSize);
-    l->addChild(label1);
+
+    CCMenuItemToggle *item = CCMenuItemToggle::createWithTarget(this, 
+                                                                menu_selector(GameMenuLayer::optionCallback),
+                                                                CCMenuItemLabel::create(label1),
+                                                                CCMenuItemLabel::create(label2),
+                                                                NULL );
+    CCMenu* menu = CCMenu::create( item, NULL );
+//    menu->setContentSize(CCSizeMake(17.5, 10));
+    
+    l->addChild(label);
+    l->addChild(menu);
     CCSize lsize = l->getContentSize();
     CCLog("++++++++getContentSize  x:%f, y:%f", lsize.width, lsize.height/2); 
-    label1->setPosition(ccp(lsize.width/2, lsize.height/2));
+    label->setPosition(ccp(s.width/2, s.height*0.9));
+    label->setScale(0.005);
     label1->setScale(0.005);
+    label2->setScale(0.005);
+    
+    menu->setAnchorPoint(ccp(0.5f, 0.5f));
+    menu->ignoreAnchorPointForPosition(false);
+    menu->setPosition(ccp(s.width/2, s.height*0.5));
+// TODO:    menu->setScale(0.5);   cannot , WHY?
 
     this->addChild(l, 1, kLayerIgnoreAnchorPoint);
     
-//    CCSprite *child = CCSprite::create("Images/grossini.png");
-//    l->addChild(child);
-//    CCSize lsize = l->getContentSize();
-//    child->setPosition(ccp(lsize.width/2, lsize.height/2));
-
-//    CCMenuItemFont *item = CCMenuItemFont::create("Toogle ignore anchor point", this, menu_selector(LayerIgnoreAnchorPointScale::onToggle));
-//
-//    CCMenu *menu = CCMenu::create(item, NULL);
-//    this->addChild(menu);
-//
-//    menu->setPosition(ccp(s.width/2, s.height/2));
-    
-//    CCScene* scene = new SceneTestScene();
-//    CCLayer* pLayer = new SceneTestLayer2();
-//    scene->addChild( pLayer, 0 );
-//
-//    CCDirector::sharedDirector()->pushScene( CCTransitionSlideInT::create(1, scene) );
-//    scene->release();
-//    pLayer->release();
+    l->runAction(CCRepeat::create(seq, 1));
 }
 
+void GameMenuLayer::optionCallback(CCObject* pSender)
+{
+    if(m_uMode == 0)
+    {
+        m_uMode = 1; //SY shoot SZ
+    }
+    else
+    {
+        m_uMode = 0; //SZ shoot SY
+    }
+    CCLog("Game mode : %d ", m_uMode);
+}
 
 void GameMenuLayer::onQuit(CCObject* pSender)
 {
@@ -240,7 +252,7 @@ void GameMenuLayer::ccTouchesEnded(CCSet* touches, CCEvent* event)
     CCScaleBy* back = (CCScaleBy*)scale->reverse();
     CCSequence *seq = CCSequence::create(back, NULL);
 
-    pLayer->runAction(CCRepeat::create(seq, 1));
+//    pLayer->runAction(CCRepeat::create(seq, 1));
 //    this->removeChild(pLayer);
 
     

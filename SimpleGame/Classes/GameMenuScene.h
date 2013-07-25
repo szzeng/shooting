@@ -57,7 +57,7 @@
 class GameMenuLayer : public cocos2d::CCLayerColor
 {
 public:
-    GameMenuLayer():_label(NULL) {};
+    GameMenuLayer():_label(NULL), m_uMode(0){};
     virtual ~GameMenuLayer();
     bool init();
     CREATE_FUNC(GameMenuLayer);
@@ -66,11 +66,15 @@ public:
     void onStart(CCObject* pSender);
     void onOption(CCObject* pSender);
     void onQuit(CCObject* pSender);
+    void optionCallback(CCObject* pSender);
 
     void gameMenuDone();
 
     CC_SYNTHESIZE_READONLY(cocos2d::CCLabelTTF*, _label, Label);
    cocos2d::CCLabelTTF* TTFFontShadowAndStroke(const char *value, int fontSize);
+
+protected:       
+       unsigned int m_uMode;
 };
 
 class GameMenuScene : public cocos2d::CCScene
