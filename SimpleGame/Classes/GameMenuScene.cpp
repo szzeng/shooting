@@ -168,20 +168,18 @@ void GameMenuLayer::onOption(CCObject* pSender)
     }
 
     CCSize s = CCDirector::sharedDirector()->getWinSize();
-    CCLayerColor *l = CCLayerColor::create(ccc4(255, 255, 255, 0xA0), 1.75, 1);
+    CCLayerColor *l = CCLayerColor::create(ccc4(255, 255, 255, 0xA0), 35.0, 20.0);
+    CCSize lsize = l->getContentSize();
+    CCLog("++++++++getContentSize  x:%f, y:%f", lsize.width, lsize.height/2);
 
 //    CCLog("++++++++getWinSize  x:%f, y:%f", s.width, s.height/2); 
     l->setAnchorPoint(ccp(0.5f, 0.5f));
     l->ignoreAnchorPointForPosition(false);
     l->setPosition(ccp( s.width/2, s.height/2));
 
-
-    CCScaleBy *scale = CCScaleBy::create(0.3, 200);
-    CCScaleBy* back = (CCScaleBy*)scale->reverse();
-    CCSequence *seq = CCSequence::create(scale, NULL);
-    
     CCLabelTTF* label = TTFFontShadowAndStroke("SZ ZENG MOD", 32);
-    CCLabelTTF* label1 = TTFFontShadowAndStroke("SZ shoot SY ", 32);
+//    CCLabelTTF* label1 = TTFFontShadowAndStroke("SZ shoot SY ", 32);
+    CCLabelTTF* label1 = TTFFontShadowAndStroke("SZ", 32);
     CCLabelTTF* label2 = TTFFontShadowAndStroke("SY shoot SZ ", 32);
 //    CCSize blockSize = CCSizeMake(350, 200);
 //    label1->setDimensions(blockSize);
@@ -191,24 +189,34 @@ void GameMenuLayer::onOption(CCObject* pSender)
                                                                 CCMenuItemLabel::create(label1),
                                                                 CCMenuItemLabel::create(label2),
                                                                 NULL );
-    CCMenu* menu = CCMenu::create( item, NULL );
-//    menu->setContentSize(CCSizeMake(17.5, 10));
-    
-    l->addChild(label);
-    l->addChild(menu);
-    CCSize lsize = l->getContentSize();
-    CCLog("++++++++getContentSize  x:%f, y:%f", lsize.width, lsize.height/2); 
-    label->setPosition(ccp(s.width/2, s.height*0.9));
-    label->setScale(0.005);
-    label1->setScale(0.005);
-    label2->setScale(0.005);
+//    CCMenuItemLabel* item2 = CCMenuItemLabel::create( label2, this, menu_selector(GameMenuLayer::onOption) );
+
+    CCMenu* menu = CCMenu::create(item, NULL);
+    menu->setContentSize(CCSizeMake(35.0, 20.0));
     
     menu->setAnchorPoint(ccp(0.5f, 0.5f));
-    menu->ignoreAnchorPointForPosition(false);
-    menu->setPosition(ccp(s.width/2, s.height*0.5));
-// TODO:    menu->setScale(0.5);   cannot , WHY?
+//    menu->ignoreAnchorPointForPosition(true);
+//    menu->alignItemsVertically();
+//    menu->alignItemsHorizontally();
+    menu->setPosition(ccp(0, 0));
+//    menu->setPosition(ccp(lsize.width/2, lsize.height*0.5));
+
+    menu->setScale(0.1);
+
+
+    l->addChild(label);
+    l->addChild(menu);
+
+    label->setPosition(ccp(lsize.width/2, lsize.height*0.9));
+    label->setScale(0.1);
+//    label1->setScale(0.5);
+//    label2->setScale(0.5);
 
     this->addChild(l, 1, kLayerIgnoreAnchorPoint);
+
+    CCScaleBy *scale = CCScaleBy::create(0.3, 10);
+    CCScaleBy* back = (CCScaleBy*)scale->reverse();
+    CCSequence *seq = CCSequence::create(scale, NULL);
     
     l->runAction(CCRepeat::create(seq, 1));
 }
