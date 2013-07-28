@@ -3,6 +3,7 @@
 #include "SimpleAudioEngine.h"
 
 using namespace cocos2d;
+unsigned int HelloWorld::m_uMode = 0;
 
 HelloWorld::~HelloWorld()
 {
@@ -29,9 +30,11 @@ HelloWorld::HelloWorld()
 {
 }
 
-CCScene* HelloWorld::scene()
+CCScene* HelloWorld::scene(unsigned int mode)
 {
     CCScene * scene = NULL;
+    
+    m_uMode = mode;
     do 
     {
         // 'scene' is an autorelease object
@@ -54,6 +57,7 @@ CCScene* HelloWorld::scene()
 bool HelloWorld::init()
 {
     bool bRet = false;
+    CCSprite *player;
     do 
     {
         //////////////////////////////////////////////////////////////////////////
@@ -93,10 +97,24 @@ bool HelloWorld::init()
 
         /////////////////////////////
         // 2. add your codes below...
-        CCSprite *player = CCSprite::create("Player.png", CCRectMake(0, 0, 67, 100) );
+        switch ( m_uMode )
+        {
+            case 0 :
+                player = CCSprite::create("PlayerSZ.png", CCRectMake(0, 0, 67, 100) );
+                player->setPosition( ccp(origin.x + player->getContentSize().width/2,
+                                         origin.y + visibleSize.height/2) );
+                break;
+            case 1 :
+                player = CCSprite::create("PlayerSY.png", CCRectMake(0, 0, 117, 107) );
+                player->setPosition( ccp(visibleSize.width/2,
+                                         origin.y + visibleSize.height-player->getContentSize().width/2) );
+                break;
+            default:
+                player = CCSprite::create("PlayerSZ.png", CCRectMake(0, 0, 67, 100) );
+                player->setPosition( ccp(origin.x + player->getContentSize().width/2,
+                                         origin.y + visibleSize.height/2) );
+        }
         
-        player->setPosition( ccp(origin.x + player->getContentSize().width/2,
-                                 origin.y + visibleSize.height/2) );
         this->addChild(player);
 
         this->schedule( schedule_selector(HelloWorld::gameLogic), 1.0 );
@@ -127,7 +145,19 @@ void HelloWorld::menuCloseCallback(CCObject* pSender)
 // cpp with cocos2d-x
 void HelloWorld::addTarget()
 {
-    CCSprite *target = CCSprite::create("Target.png", CCRectMake(0,0,43,65) );
+    CCSprite *target;
+
+    switch ( m_uMode )
+    {
+        case 0 :
+            target = CCSprite::create("TargetSY.png", CCRectMake(0,0,43,65) );        
+            break;
+        case 1 :
+            target = CCSprite::create("TargetSZ.png", CCRectMake(0,0,46,65) );                
+            break;
+        default:
+            target = CCSprite::create("TargetSY.png", CCRectMake(0,0,43,65) );        
+    }
     
     // Determine where to spawn the target along the Y axis
     CCSize winSize = CCDirector::sharedDirector()->getVisibleSize();
@@ -201,27 +231,53 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
     CCSize winSize = CCDirector::sharedDirector()->getVisibleSize();
     CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
     CCSprite *projectile = CCSprite::create("Projectile.png", CCRectMake(0, 0, 20, 20));
-    projectile->setPosition( ccp(origin.x+20, origin.y+winSize.height/2) );
+
+    switch ( m_uMode )    
+    {
+        case 0 :
+            projectile->setPosition( ccp(origin.x+20, origin.y+winSize.height/2) );        
+            break;
+        case 1 :
+            projectile->setPosition( ccp(winSize.width/2, origin.y+winSize.height-55));
+            break;
+        default:
+            projectile->setPosition( ccp(origin.x+20, origin.y+winSize.height/2) );        
+    }
 
     // Determinie offset of location to projectile
     float offX = location.x - projectile->getPosition().x;
     float offY = location.y - projectile->getPosition().y;
 
-    // Bail out if we are shooting down or backwards
-    if (offX <= 0) return;
-
     // Ok to add now - we've double checked position
     this->addChild(projectile);
-
-    // Determine where we wish to shoot the projectile to
-    float realX = origin.x+winSize.width + (projectile->getContentSize().width/2);
-    float ratio = offY / offX;
-    float realY = (realX * ratio) + projectile->getPosition().y;
-    CCPoint realDest = ccp(realX, realY);
-
-    // Determine the length of how far we're shooting
-    float offRealX = realX - projectile->getPosition().x;
-    float offRealY = realY - projectile->getPosition().y;
+    
+    float realX, ratio, realY, offRealX, offRealY;
+    CCPoint realDest;
+    if (offX <= 0)   // Bail out if we are shooting down or backwards
+    {
+        // Determine where we wish to shoot the projectile to
+        realX = projectile->getPosition().x;
+        ratio = offY / offX;
+        realY = projectile->getPosition().y - (realX * ratio);
+        realDest = ccp(0, realY);
+        
+        // Determine the length of how far we're shooting
+        offRealX = projectile->getPosition().x;
+        offRealY = realY - projectile->getPosition().y;
+    }
+    else
+    {
+        // Determine where we wish to shoot the projectile to
+        realX = origin.x+winSize.width + (projectile->getContentSize().width/2);
+        ratio = offY / offX;
+        realY = ((realX-projectile->getPosition().x) * ratio) + projectile->getPosition().y;
+        realDest = ccp(realX, realY);
+        
+        // Determine the length of how far we're shooting
+        offRealX = realX - projectile->getPosition().x;
+        offRealY = realY - projectile->getPosition().y;
+    }
+    
     float length = sqrtf((offRealX * offRealX) + (offRealY*offRealY));
     float velocity = 480/1; // 480pixels/1sec
     float realMoveDuration = length/velocity;
@@ -283,7 +339,7 @@ void HelloWorld::updateGame(float dt)
             this->removeChild(target, true);
 
             _projectilesDestroyed++;
-            if (_projectilesDestroyed >= 5)
+            if (_projectilesDestroyed >= 20)
             {
                 GameOverScene *gameOverScene = GameOverScene::create();
                 gameOverScene->getLayer()->getLabel()->setString("You Win!");

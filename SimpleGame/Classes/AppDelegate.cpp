@@ -47,15 +47,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     pDirector->setAnimationInterval(1.0 / 60);
 
     
-    CCDictionary *strings = CCDictionary::createWithContentsOfFile("strings.xml");
-    //?¨¢¨¨?Hello?¨¹?D¦Ì??¦Ì objectForKey?¨´?Ykey¡ê???¨¨???¨®|¦Ì?string
-    const char *version = ((CCString*)strings->objectForKey("Version"))->m_sString.c_str();
-    //?¨¢¨¨?Info?¨¹?D¦Ì??¦Ì
-    const char *info = ((CCString*)strings->objectForKey("Info"))->m_sString.c_str();
-    
     // create a scene. it's an autorelease object
     GameMenuScene *gameMenuScene = GameMenuScene::create();
-    gameMenuScene->getLayer()->getLabel()->setString(version);
 
     // run
     pDirector->runWithScene(gameMenuScene);

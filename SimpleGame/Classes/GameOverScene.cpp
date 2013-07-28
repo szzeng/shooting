@@ -25,6 +25,7 @@
 
 #include "GameOverScene.h"
 #include "HelloWorldScene.h"
+#include "GameMenuScene.h"
 
 using namespace cocos2d;
 
@@ -81,7 +82,12 @@ bool GameOverLayer::init()
 
 void GameOverLayer::gameOverDone()
 {
-	CCDirector::sharedDirector()->replaceScene( HelloWorld::scene() );
+
+    // create a scene. it's an autorelease object
+    GameMenuScene *gameMenuScene = GameMenuScene::create();
+    CocosDenshion::SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
+
+	CCDirector::sharedDirector()->replaceScene(gameMenuScene);
 }
 
 GameOverLayer::~GameOverLayer()
