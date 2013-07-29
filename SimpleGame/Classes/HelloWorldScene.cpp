@@ -202,9 +202,9 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
     {
         _targets->removeObject(sprite);
         
-        GameOverScene *gameOverScene = GameOverScene::create();
-        gameOverScene->getLayer()->getLabel()->setString("You Lose :[");
-        CCDirector::sharedDirector()->replaceScene(gameOverScene);
+        GameLoseScene *GameLoseScene = GameLoseScene::create();
+        GameLoseScene->getLayer()->getLabel()->setString("You Lose :[");
+        CCDirector::sharedDirector()->replaceScene(GameLoseScene);
 
     }
     else if (sprite->getTag() == 2) // projectile
@@ -279,7 +279,7 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
     }
     
     float length = sqrtf((offRealX * offRealX) + (offRealY*offRealY));
-    float velocity = 480/1; // 480pixels/1sec
+    float velocity = 240/1; // 480pixels/1sec
     float realMoveDuration = length/velocity;
 
     // Move projectile to actual endpoint
@@ -341,9 +341,9 @@ void HelloWorld::updateGame(float dt)
             _projectilesDestroyed++;
             if (_projectilesDestroyed >= 20)
             {
-                GameOverScene *gameOverScene = GameOverScene::create();
-                gameOverScene->getLayer()->getLabel()->setString("You Win!");
-                CCDirector::sharedDirector()->replaceScene(gameOverScene);
+                GameWinScene *GameWinScene = GameWinScene::create();
+                GameWinScene->getLayer()->getLabel()->setString("You Win!");
+                CCDirector::sharedDirector()->replaceScene(GameWinScene);
             }
         }
 

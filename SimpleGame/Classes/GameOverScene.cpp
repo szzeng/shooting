@@ -31,53 +31,44 @@ using namespace cocos2d;
 
 bool GameOverScene::init()
 {
-	if( CCScene::init() )
-	{
-		this->_layer = GameOverLayer::create();
-		this->_layer->retain();
-		this->addChild(_layer);
-		
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    if( CCScene::init() )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 GameOverScene::~GameOverScene()
 {
-	if (_layer)
-	{
-		_layer->release();
-		_layer = NULL;
-	}
 }
 
 
 bool GameOverLayer::init()
 {
-	if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
-	{
-		CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-		this->_label = CCLabelTTF::create("","Artial", 32);
-		_label->retain();
-		_label->setColor( ccc3(0, 0, 0) );
-		_label->setPosition( ccp(winSize.width/2, winSize.height/2) );
-		this->addChild(_label);
-		
-		this->runAction( CCSequence::create(
+    if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
+    {
+        CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+        this->_label = CCLabelTTF::create("","Artial", 32);
+        _label->retain();
+        _label->setColor( ccc3(0, 0, 0) );
+        _label->setPosition( ccp(winSize.width/2, winSize.height/2) );
+        this->addChild(_label);
+        
+        this->runAction( CCSequence::create(
                                 CCDelayTime::create(3),
                                 CCCallFunc::create(this, 
                                 callfunc_selector(GameOverLayer::gameOverDone)),
                                 NULL));
-		
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+        
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void GameOverLayer::gameOverDone()
@@ -87,14 +78,151 @@ void GameOverLayer::gameOverDone()
     GameMenuScene *gameMenuScene = GameMenuScene::create();
     CocosDenshion::SimpleAudioEngine::sharedEngine()->stopBackgroundMusic();
 
-	CCDirector::sharedDirector()->replaceScene(gameMenuScene);
+    CCDirector::sharedDirector()->replaceScene(gameMenuScene);
 }
 
 GameOverLayer::~GameOverLayer()
 {
-	if (_label)
-	{
-		_label->release();
-		_label = NULL;
-	}
+    if (_label)
+    {
+        _label->release();
+        _label = NULL;
+    }
 }
+
+bool GameWinScene::init()
+{
+    if( CCScene::init() )
+    {
+        this->_layer = GameWinLayer::create();
+        this->_layer->retain();
+        this->addChild(_layer);
+        
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+GameWinScene::~GameWinScene()
+{
+    if (_layer)
+    {
+        _layer->release();
+        _layer = NULL;
+    }
+}
+
+
+bool GameWinLayer::init()
+{
+    if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
+    {
+        CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+        this->_label = CCLabelTTF::create("","Artial", 32);
+        _label->retain();
+        _label->setColor( ccc3(0, 0, 0) );
+        _label->setPosition( ccp(winSize.width/2, winSize.height/2) );
+        this->addChild(_label);
+        
+        this->runAction( CCSequence::create(
+                                CCDelayTime::create(3),
+                                CCCallFunc::create(this, 
+                                callfunc_selector(GameWinLayer::gameOverDone)),
+                                NULL));
+        
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void GameWinLayer::gameOverDone()
+{
+    GameOverLayer::gameOverDone();
+}
+
+GameWinLayer::~GameWinLayer()
+{
+    if (_label)
+    {
+        _label->release();
+        _label = NULL;
+    }
+}
+
+bool GameLoseScene::init()
+{
+    if( CCScene::init() )
+    {
+        this->_layer = GameLoseLayer::create();
+        this->_layer->retain();
+        this->addChild(_layer);
+        
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+GameLoseScene::~GameLoseScene()
+{
+    if (_layer)
+    {
+        _layer->release();
+        _layer = NULL;
+    }
+}
+
+
+bool GameLoseLayer::init()
+{
+    if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
+    {
+        CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+        
+        CCSprite* bg = CCSprite::create("Lose.png");
+//        bg->setScale(winSize.width/bg->getTextureRect().size.width);
+        bg->setPosition(ccp(winSize.width/4, winSize.height/2));
+        this->addChild(bg, 0);
+        
+        this->_label = CCLabelTTF::create("","Artial", 32);
+        _label->retain();
+        _label->setColor( ccc3(0, 0, 0) );
+        _label->setPosition( ccp(winSize.width*3/5 , winSize.height/2) );
+        this->addChild(_label, 1);
+        
+        this->runAction( CCSequence::create(
+                                CCDelayTime::create(3),
+                                CCCallFunc::create(this, 
+                                callfunc_selector(GameLoseLayer::gameOverDone)),
+                                NULL));
+        
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void GameLoseLayer::gameOverDone()
+{
+    GameOverLayer::gameOverDone();
+}
+
+GameLoseLayer::~GameLoseLayer()
+{
+    if (_label)
+    {
+        _label->release();
+        _label = NULL;
+    }
+}
+

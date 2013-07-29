@@ -33,10 +33,10 @@ class GameOverLayer : public cocos2d::CCLayerColor
 public:
     GameOverLayer():_label(NULL) {};
     virtual ~GameOverLayer();
-    bool init();
+    virtual bool init();
     CREATE_FUNC(GameOverLayer);
 
-    void gameOverDone();
+    virtual void gameOverDone();
 
     CC_SYNTHESIZE_READONLY(cocos2d::CCLabelTTF*, _label, Label);
 };
@@ -44,12 +44,58 @@ public:
 class GameOverScene : public cocos2d::CCScene
 {
 public:
-    GameOverScene():_layer(NULL) {};
+    GameOverScene(){};
     ~GameOverScene();
-    bool init();
+    virtual bool init();
     CREATE_FUNC(GameOverScene);
   
-    CC_SYNTHESIZE_READONLY(GameOverLayer*, _layer, Layer);
+//    CC_SYNTHESIZE_READONLY(GameOverLayer*, _layer, Layer);
+};
+
+class GameWinLayer : public GameOverLayer
+{
+public:
+    GameWinLayer(){};
+    ~GameWinLayer();
+    bool init();
+    CREATE_FUNC(GameWinLayer);
+
+    void gameOverDone();
+
+};
+
+class GameWinScene : public GameOverScene
+{
+public:
+    GameWinScene():_layer(NULL) {};
+    ~GameWinScene();
+    bool init();
+    CREATE_FUNC(GameWinScene);
+  
+    CC_SYNTHESIZE_READONLY(GameWinLayer*, _layer, Layer);
+};
+
+class GameLoseLayer : public GameOverLayer
+{
+public:
+    GameLoseLayer(){};
+    ~GameLoseLayer();
+    bool init();
+    CREATE_FUNC(GameLoseLayer);
+
+    void gameOverDone();
+
+};
+
+class GameLoseScene : public GameOverScene
+{
+public:
+    GameLoseScene():_layer(NULL) {};
+    ~GameLoseScene();
+    bool init();
+    CREATE_FUNC(GameLoseScene);
+  
+    CC_SYNTHESIZE_READONLY(GameLoseLayer*, _layer, Layer);
 };
 
 #endif // _GAME_OVER_SCENE_H_
