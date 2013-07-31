@@ -146,14 +146,33 @@ void HelloWorld::menuCloseCallback(CCObject* pSender)
 void HelloWorld::addTarget()
 {
     CCSprite *target;
+//    CCAnimation* animation;
+    CCDelayTime *delay;
 
     switch ( m_uMode )
     {
         case 0 :
-            target = CCSprite::create("TargetSY.png", CCRectMake(0,0,43,65) );        
+            target = CCSprite::create("TargetSY.png", CCRectMake(0,0,43,65) ); 
+            
+//            animation = CCAnimation::create();
+//            animation->addSpriteFrameWithFileName("TargetSY.png");
+//            animation->addSpriteFrameWithFileName("TargetSY1.png");
+//            animation->setDelayPerUnit(0.3f);
+//            animation->setRestoreOriginalFrame(true);
+//            target->runAction(CCRepeatForever::create(CCAnimate::create(animation)));
+//            CCActionInterval* seq = CCSequence::create( animate,
+//                               CCFlipX::create(true),
+//                               animate->copy()->autorelease(),
+//                               CCFlipX::create(false),
+//                               NULL);
+            delay = CCDelayTime::create(0.3);
+            target->runAction(CCRepeatForever::create((CCActionInterval*)CCSequence::create(delay, CCFlipX::create(true),delay->copy()->autorelease(), CCFlipX::create(false),NULL)));
+            
             break;
         case 1 :
             target = CCSprite::create("TargetSZ.png", CCRectMake(0,0,46,65) );                
+            target->setRotation(20);
+            target->runAction(CCRepeatForever::create((CCActionInterval*)CCSequence::create(CCRotateBy::create(0.5,-40),CCRotateBy::create(0.5,40),NULL)));
             break;
         default:
             target = CCSprite::create("TargetSY.png", CCRectMake(0,0,43,65) );        
@@ -195,7 +214,8 @@ void HelloWorld::addTarget()
 
 void HelloWorld::spriteMoveFinished(CCNode* sender)
 {
-    CCSprite *sprite = (CCSprite *)sender;
+//    CCSprite *sprite = (CCSprite *)sender;
+    CCSprite* sprite = dynamic_cast<CCSprite*>(sender);
     this->removeChild(sprite, true);
 
     if (sprite->getTag() == 1)  // target
@@ -207,9 +227,10 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
         CCDirector::sharedDirector()->replaceScene(GameLoseScene);
 
     }
-    else if (sprite->getTag() == 2) // projectile
+    else if (sprite->getTag() == 2 || sprite->getTag() == 3) // projectile
     {
         _projectiles->removeObject(sprite);
+        this->removeChild(sprite, true);
     }
 }
 
@@ -247,7 +268,8 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
     // Determinie offset of location to projectile
     float offX = location.x - projectile->getPosition().x;
     float offY = location.y - projectile->getPosition().y;
-
+    
+    projectile->runAction(CCRepeatForever::create((CCActionInterval*)CCSequence::create(CCScaleTo::create(0.2, 0.7),CCScaleTo::create(0.2,1),NULL)));
     // Ok to add now - we've double checked position
     this->addChild(projectile);
     
@@ -306,52 +328,70 @@ void HelloWorld::updateGame(float dt)
     CCARRAY_FOREACH(_projectiles, it)
     {
         CCSprite *projectile = dynamic_cast<CCSprite*>(it);
-        CCRect projectileRect = CCRectMake(
-            projectile->getPosition().x - (projectile->getContentSize().width/2),
-            projectile->getPosition().y - (projectile->getContentSize().height/2),
-            projectile->getContentSize().width,
-            projectile->getContentSize().height);
-
-        CCArray* targetsToDelete =new CCArray;
-
-        // for (jt = _targets->begin(); jt != _targets->end(); jt++)
-        CCARRAY_FOREACH(_targets, jt)
+        if ( projectile->getTag() != 3 ) // not booms
         {
-            CCSprite *target = dynamic_cast<CCSprite*>(jt);
-            CCRect targetRect = CCRectMake(
-                target->getPosition().x - (target->getContentSize().width/2),
-                target->getPosition().y - (target->getContentSize().height/2),
-                target->getContentSize().width,
-                target->getContentSize().height);
-
-            // if (CCRect::CCRectIntersectsRect(projectileRect, targetRect))
-            if (projectileRect.intersectsRect(targetRect))
+            CCRect projectileRect = CCRectMake(
+                projectile->getPosition().x - (projectile->getContentSize().width/2),
+                projectile->getPosition().y - (projectile->getContentSize().height/2),
+                projectile->getContentSize().width,
+                projectile->getContentSize().height);
+            
+            CCArray* targetsToDelete =new CCArray;
+            
+            // for (jt = _targets->begin(); jt != _targets->end(); jt++)
+            CCARRAY_FOREACH(_targets, jt)
             {
-                targetsToDelete->addObject(target);
+                CCSprite *target = dynamic_cast<CCSprite*>(jt);
+                CCRect targetRect = CCRectMake(
+                    target->getPosition().x - (target->getContentSize().width/2),
+                    target->getPosition().y - (target->getContentSize().height/2),
+                    target->getContentSize().width,
+                    target->getContentSize().height);
+            
+                // if (CCRect::CCRectIntersectsRect(projectileRect, targetRect))
+                if (projectileRect.intersectsRect(targetRect))
+                {
+                    targetsToDelete->addObject(target);
+                    target->setVisible(false);
+                    
+                    CCSprite *boomAnimation = CCSprite::create("Projectile.png", CCRectMake(0, 0, 20, 20));
+                    boomAnimation->setPosition(ccp(target->getPosition().x, target->getPosition().y));
+                    boomAnimation->runAction( CCSequence::create(
+                        CCScaleTo::create(0.5, 0.5),CCScaleTo::create(0.5,2),
+                        CCScaleTo::create(0.5, 0.5),CCScaleTo::create(0.5,2),
+                        CCCallFuncN::create(this, 
+                                            callfuncN_selector(HelloWorld::spriteMoveFinished)), 
+                        NULL) );
+                    
+                    // Add to projectiles array
+                    boomAnimation->setTag(3);
+                    _projectiles->addObject(boomAnimation);
+                    this->addChild(boomAnimation);
+                }
             }
-        }
-
-        // for (jt = targetsToDelete->begin(); jt != targetsToDelete->end(); jt++)
-        CCARRAY_FOREACH(targetsToDelete, jt)
-        {
-            CCSprite *target = dynamic_cast<CCSprite*>(jt);
-            _targets->removeObject(target);
-            this->removeChild(target, true);
-
-            _projectilesDestroyed++;
-            if (_projectilesDestroyed >= 20)
+            
+            // for (jt = targetsToDelete->begin(); jt != targetsToDelete->end(); jt++)
+            CCARRAY_FOREACH(targetsToDelete, jt)
             {
-                GameWinScene *GameWinScene = GameWinScene::create();
-                GameWinScene->getLayer()->getLabel()->setString("You Win!");
-                CCDirector::sharedDirector()->replaceScene(GameWinScene);
+                CCSprite *target = dynamic_cast<CCSprite*>(jt);
+                _targets->removeObject(target);
+                this->removeChild(target, true);
+            
+                _projectilesDestroyed++;
+                if (_projectilesDestroyed >= 20)
+                {
+                    GameWinScene *GameWinScene = GameWinScene::create();
+                    GameWinScene->getLayer()->getLabel()->setString("You Win!");
+                    CCDirector::sharedDirector()->replaceScene(GameWinScene);
+                }
             }
+            
+            if (targetsToDelete->count() > 0)
+            {
+                projectilesToDelete->addObject(projectile);
+            }
+            targetsToDelete->release();
         }
-
-        if (targetsToDelete->count() > 0)
-        {
-            projectilesToDelete->addObject(projectile);
-        }
-        targetsToDelete->release();
     }
 
     // for (it = projectilesToDelete->begin(); it != projectilesToDelete->end(); it++)
