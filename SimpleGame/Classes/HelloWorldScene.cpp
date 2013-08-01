@@ -18,7 +18,12 @@ HelloWorld::~HelloWorld()
         _projectiles->release();
         _projectiles = NULL;
     }
-
+    if (_booms)
+    {
+        _booms->release();
+        _booms = NULL;
+    }
+    
     // cpp don't need to call super dealloc
     // virtual destructor will do this
 }
@@ -26,6 +31,7 @@ HelloWorld::~HelloWorld()
 HelloWorld::HelloWorld()
 :_targets(NULL)
 ,_projectiles(NULL)
+,_booms(NULL)
 ,_projectilesDestroyed(0)
 {
 }
@@ -117,12 +123,13 @@ bool HelloWorld::init()
         
         this->addChild(player);
 
-        this->schedule( schedule_selector(HelloWorld::gameLogic), 1.0 );
+        this->schedule( schedule_selector(HelloWorld::gameLogic), 0.5 );
 
         this->setTouchEnabled(true);
 
         _targets = new CCArray;
         _projectiles = new CCArray;
+        _booms= new CCArray;
 
         // use updateGame instead of update, otherwise it will conflit with SelectorProtocol::update
         // see http://www.cocos2d-x.org/boards/6/topics/1478
@@ -216,7 +223,6 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
 {
 //    CCSprite *sprite = (CCSprite *)sender;
     CCSprite* sprite = dynamic_cast<CCSprite*>(sender);
-    this->removeChild(sprite, true);
 
     if (sprite->getTag() == 1)  // target
     {
@@ -227,11 +233,16 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
         CCDirector::sharedDirector()->replaceScene(GameLoseScene);
 
     }
-    else if (sprite->getTag() == 2 || sprite->getTag() == 3) // projectile
+    else if (sprite->getTag() == 2) // projectile
     {
         _projectiles->removeObject(sprite);
-        this->removeChild(sprite, true);
     }
+    else
+    {
+        _booms->removeObject(sprite);
+    }
+    
+    this->removeChild(sprite, true);
 }
 
 void HelloWorld::gameLogic(float dt)
@@ -246,7 +257,7 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
     CCTouch* touch = (CCTouch*)( touches->anyObject() );
     CCPoint location = touch->getLocation();
     
-    CCLog("++++++++after  x:%f, y:%f", location.x, location.y);
+//    CCLog("++++++++after  x:%f, y:%f", location.x, location.y);
 
     // Set up initial location of projectile
     CCSize winSize = CCDirector::sharedDirector()->getVisibleSize();
@@ -328,6 +339,7 @@ void HelloWorld::updateGame(float dt)
     CCARRAY_FOREACH(_projectiles, it)
     {
         CCSprite *projectile = dynamic_cast<CCSprite*>(it);
+       
         if ( projectile->getTag() != 3 ) // not booms
         {
             CCRect projectileRect = CCRectMake(
@@ -352,7 +364,7 @@ void HelloWorld::updateGame(float dt)
                 if (projectileRect.intersectsRect(targetRect))
                 {
                     targetsToDelete->addObject(target);
-                    target->setVisible(false);
+                   target->setVisible(false);
                     
                     CCSprite *boomAnimation = CCSprite::create("Projectile.png", CCRectMake(0, 0, 20, 20));
                     boomAnimation->setPosition(ccp(target->getPosition().x, target->getPosition().y));
@@ -362,10 +374,9 @@ void HelloWorld::updateGame(float dt)
                         CCCallFuncN::create(this, 
                                             callfuncN_selector(HelloWorld::spriteMoveFinished)), 
                         NULL) );
-                    
                     // Add to projectiles array
                     boomAnimation->setTag(3);
-                    _projectiles->addObject(boomAnimation);
+                    _booms->addObject(boomAnimation);
                     this->addChild(boomAnimation);
                 }
             }
@@ -391,6 +402,7 @@ void HelloWorld::updateGame(float dt)
                 projectilesToDelete->addObject(projectile);
             }
             targetsToDelete->release();
+
         }
     }
 

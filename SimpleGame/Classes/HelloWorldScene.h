@@ -37,6 +37,7 @@ public:
 protected:
     cocos2d::CCArray *_targets;
     cocos2d::CCArray *_projectiles;
+    cocos2d::CCArray *_booms;
     int _projectilesDestroyed;
     static unsigned int m_uMode;
     
