@@ -101,12 +101,12 @@ bool GameMenuLayer::init()
         CCSize winSize = CCDirector::sharedDirector()->getWinSize();
         CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
         CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
-        CCLog("GameMenuLayer:testDealloc %f, %f",winSize.width, winSize.height);
+//        CCLog("GameMenuLayer:testDealloc %f, %f",winSize.width, winSize.height);
         
         this->_label = TTFFontShadowAndStroke("", 16);
         _label->retain();
 
-        CCLog("GameMenuLayer:origin %f, %f", origin.x, origin.y);
+//        CCLog("GameMenuLayer:origin %f, %f", origin.x, origin.y);
         _label->setPosition( ccp(origin.x + _label->getFontSize()*2 , origin.y + visibleSize.height - _label->getFontSize()) );
 //        _label->setPosition(ccp(winSize.width/2, winSize.height/2));
         this->addChild(_label, 1);
@@ -114,7 +114,7 @@ bool GameMenuLayer::init()
         this->setTouchEnabled(true);
 
         CCSprite* bg = CCSprite::create("Menu1.png");
-        bg->setScale(winSize.width/bg->getTextureRect().size.width);
+        bg->setScale(visibleSize.width/bg->getTextureRect().size.width);
         bg->setPosition(ccp(winSize.width/2, winSize.height/2));
         addChild(bg, 0);
 

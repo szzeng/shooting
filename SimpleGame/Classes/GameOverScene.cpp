@@ -121,14 +121,41 @@ bool GameWinLayer::init()
     if ( CCLayerColor::initWithColor( ccc4(255,255,255,255) ) )
     {
         CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+        CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
+        CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
         this->_label = CCLabelTTF::create("","Artial", 32);
         _label->retain();
         _label->setColor( ccc3(0, 0, 0) );
-        _label->setPosition( ccp(winSize.width/2, winSize.height/2) );
+        _label->setPosition( ccp(winSize.width*3/4, winSize.height*3/4) );
         this->addChild(_label);
         
+        // Determine the ending
+        int min= (int)2.0;
+        int max = (int)6.0;
+        int range = max - min;
+        // srand( TimGetTicks() );
+        int actual = (int)( rand() % range ) + min;
+        
+        char str[20] = {0};
+        sprintf(str, "WinBG%d.png", actual);
+        
+//        CCLog("GameWinLayer++%s",str);
+        
+        CCSprite* bg = CCSprite::create(str);
+        bg->setScale(visibleSize.height/bg->getTextureRect().size.height);
+        bg->setPosition(ccp(origin.x + (bg->getTextureRect().size.width*visibleSize.height)/
+            (2*bg->getTextureRect().size.height),
+            winSize.height/2));
+//        bg->setOpacity(50);
+        this->addChild(bg, 0);
+
+        CCSprite* bg1 = CCSprite::create("WinBG1.png");
+        bg1->setPosition( ccp(winSize.width - bg1->getTextureRect().size.width/2 , origin.y + bg1->getTextureRect().size.height/2) );
+//        bg->setOpacity(50);
+        this->addChild(bg1, 0);
+        
         this->runAction( CCSequence::create(
-                                CCDelayTime::create(3),
+                                CCDelayTime::create(6),
                                 CCCallFunc::create(this, 
                                 callfunc_selector(GameWinLayer::gameOverDone)),
                                 NULL));
@@ -192,6 +219,7 @@ bool GameLoseLayer::init()
         bg->setPosition(ccp(winSize.width/4, winSize.height/2));
         this->addChild(bg, 0);
         
+//        CCLog("GameLoseLayer");
         this->_label = CCLabelTTF::create("","Artial", 32);
         _label->retain();
         _label->setColor( ccc3(0, 0, 0) );

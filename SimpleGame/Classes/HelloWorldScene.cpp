@@ -4,6 +4,7 @@
 
 using namespace cocos2d;
 unsigned int HelloWorld::m_uMode = 0;
+#define TRANSITION_DURATION (1.2f)
 
 HelloWorld::~HelloWorld()
 {
@@ -24,6 +25,7 @@ HelloWorld::~HelloWorld()
         _booms = NULL;
     }
     
+//    CCLog("~HelloWorld");
     // cpp don't need to call super dealloc
     // virtual destructor will do this
 }
@@ -64,6 +66,7 @@ bool HelloWorld::init()
 {
     bool bRet = false;
     CCSprite *player;
+    
     do 
     {
         //////////////////////////////////////////////////////////////////////////
@@ -75,6 +78,7 @@ bool HelloWorld::init()
         //////////////////////////////////////////////////////////////////////////
         // add your codes below...
         //////////////////////////////////////////////////////////////////////////
+        
 
         // 1. Add a menu item with "X" image, which is clicked to quit the program.
 
@@ -89,6 +93,7 @@ bool HelloWorld::init()
         // Place the menu item bottom-right conner.
         CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
         CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
+        CCSize winSize = CCDirector::sharedDirector()->getWinSize();
         
         pCloseItem->setPosition(ccp(origin.x + visibleSize.width - pCloseItem->getContentSize().width/2,
                                     origin.y + pCloseItem->getContentSize().height/2));
@@ -100,6 +105,13 @@ bool HelloWorld::init()
 
         // Add the menu to HelloWorld layer as a child layer.
         this->addChild(pMenu, 1);
+
+        // background 
+        CCSprite* bg = CCSprite::create("Bg.png");
+        bg->setScale(visibleSize.height/bg->getTextureRect().size.height);
+        bg->setPosition(ccp(winSize.width/2, winSize.height/2));
+        bg->setOpacity(130);
+        this->addChild(bg, 0);
 
         /////////////////////////////
         // 2. add your codes below...
@@ -231,6 +243,7 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
         GameLoseScene *GameLoseScene = GameLoseScene::create();
         GameLoseScene->getLayer()->getLabel()->setString("You Lose :[");
         CCDirector::sharedDirector()->replaceScene(GameLoseScene);
+        return;
 
     }
     else if (sprite->getTag() == 2) // projectile
@@ -312,7 +325,7 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
     }
     
     float length = sqrtf((offRealX * offRealX) + (offRealY*offRealY));
-    float velocity = 240/1; // 480pixels/1sec
+    float velocity = 120/1; // 480pixels/1sec
     float realMoveDuration = length/velocity;
 
     // Move projectile to actual endpoint
@@ -389,11 +402,19 @@ void HelloWorld::updateGame(float dt)
                 this->removeChild(target, true);
             
                 _projectilesDestroyed++;
-                if (_projectilesDestroyed >= 20)
+                if (_projectilesDestroyed >= 25)
                 {
                     GameWinScene *GameWinScene = GameWinScene::create();
                     GameWinScene->getLayer()->getLabel()->setString("You Win!");
-                    CCDirector::sharedDirector()->replaceScene(GameWinScene);
+                        CCScene* pScene = CCTransitionFade::create(TRANSITION_DURATION, GameWinScene);
+                    //    scene->release();      //???why error?
+                        CCDirector::sharedDirector()->setDepthTest(false);
+                        if (pScene)
+                        {
+                            this->unschedule( schedule_selector(HelloWorld::updateGame) );
+                            CCDirector::sharedDirector()->replaceScene(pScene);
+                        }
+                        return;
                 }
             }
             
