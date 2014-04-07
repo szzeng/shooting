@@ -1,5 +1,5 @@
 /****************************************************************************
-Copyright (c) 2010-2012 cocos2d-x.org
+Copyright (c) 2010-2011 cocos2d-x.org
 
 http://www.cocos2d-x.org
 
@@ -21,19 +21,28 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-package org.cocos2dx.simplegame;
+package com.szzeng.shooting;
 
 import org.cocos2dx.lib.Cocos2dxActivity;
+import org.cocos2dx.lib.Cocos2dxGLSurfaceView;
 
 import android.os.Bundle;
 
-public class SimpleGame extends Cocos2dxActivity{
-
-	protected void onCreate(Bundle savedInstanceState){
-		super.onCreate(savedInstanceState);
-	}
+public class shooting extends Cocos2dxActivity{
 	
-    static {
-        System.loadLibrary("game");
+    protected void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);	
+	}
+
+    public Cocos2dxGLSurfaceView onCreateView() {
+    	Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
+    	// shooting should create stencil buffer
+    	glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8);
+    	
+    	return glSurfaceView;
     }
+
+    static {
+        System.loadLibrary("cocos2dcpp");
+    }     
 }

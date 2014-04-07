@@ -107,7 +107,9 @@ bool GameMenuLayer::init()
         _label->retain();
 
 //        CCLog("GameMenuLayer:origin %f, %f", origin.x, origin.y);
-        _label->setPosition( ccp(origin.x + _label->getFontSize()*2 , origin.y + visibleSize.height - _label->getFontSize()) );
+		CCLog("GameMenuLayer:getContentSize %f, %f", _label->getContentSize().width, _label->getContentSize().height);
+		_label->setAnchorPoint(ccp(0, 0));
+		_label->setPosition( ccp(origin.x + _label->getFontSize() , origin.y + visibleSize.height - _label->getFontSize()*3/2) );
 //        _label->setPosition(ccp(winSize.width/2, winSize.height/2));
         this->addChild(_label, 1);
 
@@ -134,6 +136,37 @@ bool GameMenuLayer::init()
 
         addChild(menu, 1);
 //        schedule( schedule_selector(GameMenuLayer::testDealloc) );
+
+                //
+        // Configure shader to mimic glAlphaTest
+//        //
+//        CCGLProgram *alphaTestShader = CCShaderCache::sharedShaderCache()->programForKey(kCCShader_PositionTextureColorAlphaTest);
+//        GLint alphaValueLocation = glGetUniformLocation(alphaTestShader->getProgram(), kCCUniformAlphaTestValue);
+//
+//        // set alpha test value
+//        // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
+//        if (getShaderProgram())
+//        {
+//            getShaderProgram()->setUniformLocationWith1f(alphaValueLocation, 0.0f);
+//        }
+//        
+//            CCNode* node = CCNode::create();
+//        // camera uses the center of the image as the pivoting point
+//        node->setContentSize( CCSizeMake(200,200) );
+//        node->setAnchorPoint( ccp(0.5f, 0.5f));
+//        node->setPosition( ccp(winSize.width*3/4, winSize.height*3/4));
+//
+//        addChild(node, 10);
+//
+//        CCSprite* sprite = CCSprite::create("Projectile.png", CCRectMake(85*0, 121*1, 40, 40));
+//        sprite->setPosition(ccp( winSize.width*3/4, winSize.height*3/4) );
+//        sprite->setVertexZ( 10 + 40 );
+//        sprite->setShaderProgram(alphaTestShader);
+//        node->addChild(sprite, 10);
+//            
+//
+//        node->runAction( CCOrbitCamera::create(10, 1, 0, 0, 360, 0, 0) );
+    
 
         return true;
     }
@@ -264,7 +297,6 @@ void GameMenuLayer::gameMenuDone()
 
 CCLabelTTF* GameMenuLayer::TTFFontShadowAndStroke(const char *value, int fontSize)
 {
-    CCSize s = CCDirector::sharedDirector()->getWinSize();
 
     ccColor3B tintColorWhite = { 255, 255, 255 };
     ccColor3B strokeColor = { 0, 0, 0 };
@@ -274,7 +306,12 @@ CCLabelTTF* GameMenuLayer::TTFFontShadowAndStroke(const char *value, int fontSiz
 
     ccFontDefinition TextDef;
     TextDef.m_fontSize = fontSize;
-    TextDef.m_fontName = std::string("fonts/Marker Felt.ttf");
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    TextDef.m_fontName = std::string("fonts/tahoma.ttf");
+#else
+    TextDef.m_fontName = std::string("fonts/Felt.ttf");
+#endif
 
     TextDef.m_shadow.m_shadowEnabled = false;
     TextDef.m_shadow.m_shadowOffset  = shadowOffset;

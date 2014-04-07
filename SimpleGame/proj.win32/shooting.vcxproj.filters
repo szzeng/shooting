@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{6c472fae-e731-4bb1-95f4-3bce4bbb9c32}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameMenuScene.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameOverScene.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\HelloWorldScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameOverScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameMenuScene.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\Resources\fonts\arial.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Courier New.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Paint Boy.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Schwarzwald Regular.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Scissor Cuts.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\tahoma.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Thonburi.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\ThonburiBold.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\A Damn Mess.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Abberancy.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\American Typewriter.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Abduction.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+    <Font Include="..\Resources\fonts\Felt.ttf">
+      <Filter>Resource</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\hd\TargetSY.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\TargetSZ.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\WinBG1.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\WinBG2.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\WinBG3.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\WinBG4.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\WinBG5.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\WinBG6.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Bg.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\CloseNormal.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\CloseSelected.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Lose.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Menu.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Menu1.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\MenuBg.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Player.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\PlayerSY.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\PlayerSZ.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Projectile.png">
+      <Filter>Resource</Filter>
+    </Image>
+    <Image Include="..\Resources\hd\Target.png">
+      <Filter>Resource</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

@@ -17,6 +17,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
     CCDirector *pDirector = CCDirector::sharedDirector();
     
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    CCEGLView::sharedOpenGLView()->setFrameSize(1280, 720);
+#endif
     pDirector->setOpenGLView(CCEGLView::sharedOpenGLView());
     
     CCSize screenSize = CCEGLView::sharedOpenGLView()->getFrameSize();
@@ -28,6 +31,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
         CCSize resourceSize = CCSizeMake(960, 640);
         searchPaths.push_back("hd");
         searchPaths.push_back("sd");
+//		searchPaths.push_back("fonts");
         pDirector->setContentScaleFactor(resourceSize.height/designSize.height);
     }
     else

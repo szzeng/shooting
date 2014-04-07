@@ -129,7 +129,8 @@ bool GameWinLayer::init()
         _label->setPosition( ccp(winSize.width*3/4, winSize.height*3/4) );
         this->addChild(_label);
         
-        // Determine the ending
+
+        // Determine the random ending
         int min= (int)2.0;
         int max = (int)6.0;
         int range = max - min;
@@ -140,7 +141,6 @@ bool GameWinLayer::init()
         sprintf(str, "WinBG%d.png", actual);
         
 //        CCLog("GameWinLayer++%s",str);
-        
         CCSprite* bg = CCSprite::create(str);
         bg->setScale(visibleSize.height/bg->getTextureRect().size.height);
         bg->setPosition(ccp(origin.x + (bg->getTextureRect().size.width*visibleSize.height)/
@@ -149,11 +149,13 @@ bool GameWinLayer::init()
 //        bg->setOpacity(50);
         this->addChild(bg, 0);
 
+
+        // fixed BG
         CCSprite* bg1 = CCSprite::create("WinBG1.png");
         bg1->setPosition( ccp(winSize.width - bg1->getTextureRect().size.width/2 , origin.y + bg1->getTextureRect().size.height/2) );
 //        bg->setOpacity(50);
         this->addChild(bg1, 0);
-        
+
         this->runAction( CCSequence::create(
                                 CCDelayTime::create(6),
                                 CCCallFunc::create(this, 

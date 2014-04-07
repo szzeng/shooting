@@ -1,4 +1,4 @@
-APPNAME="SimpleGame"
+APPNAME="shooting"
 
 # options
 
@@ -28,30 +28,16 @@ exit 0
 esac
 done
 
-# read local.properties
-
-_LOCALPROPERTIES_FILE=$(dirname "$0")"/local.properties"
-if [ -f "$_LOCALPROPERTIES_FILE" ]
-then
-    [ -r "$_LOCALPROPERTIES_FILE" ] || die "Fatal Error: $_LOCALPROPERTIES_FILE exists but is unreadable"
-
-    # strip out entries with a "." because Bash cannot process variables with a "."
-    _PROPERTIES=`sed '/\./d' "$_LOCALPROPERTIES_FILE"`
-    for line in "$_PROPERTIES"; do
-        declare "$line";
-    done
-fi
-
 # paths
 
 if [ -z "${NDK_ROOT+aaa}" ];then
-echo "NDK_ROOT not defined. Please define NDK_ROOT in your environment or in local.properties"
+echo "please define NDK_ROOT"
 exit 1
 fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # ... use paths relative to current directory
-COCOS2DX_ROOT="$DIR/../../../.."
+COCOS2DX_ROOT="$DIR/../../.."
 APP_ROOT="$DIR/.."
 APP_ANDROID_ROOT="$DIR"
 
@@ -79,21 +65,7 @@ if [ -f "$file" ]; then
 fi
 done
 
-# copy icons (if they exist)
-file="$APP_ANDROID_ROOT"/assets/Icon-72.png
-if [ -f "$file" ]; then
-	cp "$file" "$APP_ANDROID_ROOT"/res/drawable-hdpi/icon.png
-fi
-file="$APP_ANDROID_ROOT"/assets/Icon-48.png
-if [ -f "$file" ]; then
-	cp "$file" "$APP_ANDROID_ROOT"/res/drawable-mdpi/icon.png
-fi
-file="$APP_ANDROID_ROOT"/assets/Icon-32.png
-if [ -f "$file" ]; then
-	cp "$file" "$APP_ANDROID_ROOT"/res/drawable-ldpi/icon.png
-fi
-
-
+# run ndk-build
 if [[ "$buildexternalsfromsource" ]]; then
     echo "Building external dependencies from source"
     "$NDK_ROOT"/ndk-build -C "$APP_ANDROID_ROOT" $* \
